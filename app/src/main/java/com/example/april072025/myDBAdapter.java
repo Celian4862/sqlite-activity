@@ -2,6 +2,7 @@ package com.example.april072025;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -12,6 +13,38 @@ public class myDBAdapter {
         dbHelper = new myDBHelper(context);
     }
 
+    public String getData() {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String[] columns = {
+                myDBHelper.UID,
+                myDBHelper.NAME,
+                myDBHelper.MyPASSWORD
+        };
+        Cursor cursor = db.query(myDBHelper.TABLE_NAME, columns,
+                null,
+                null,
+                null,
+                null,
+                null);
+        StringBuilder stringBuffer = new StringBuilder();
+        while (cursor.moveToNext()) {
+            int temp = cursor.getColumnIndex(myDBHelper.UID);
+            int cid = cursor.getInt(Math.max(temp, 1)); // cid means customer ID
+
+            temp = cursor.getColumnIndex(myDBHelper.NAME);
+            String name = cursor.getString(Math.max(temp, 1));
+
+            temp = cursor.getColumnIndex(myDBHelper.MyPASSWORD);
+            String pass = cursor.getString(Math.max(temp, 1));
+            stringBuffer.append(cid)
+                    .append("  ")
+                    .append(name)
+                    .append("  ")
+                    .append(pass);
+        }
+        return stringBuffer.toString();
+    }
+
     public long insertData (String name, String pass) {
         SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -20,6 +53,16 @@ public class myDBAdapter {
         long id = sqLiteDatabase.insert(dbHelper.TABLE_NAME, null, contentValues);
         return id;
     }
+
+    public int deleteData(String uname) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String[] whereArgs = {uname};
+        int count = db.delete(
+                myDBHelper.TABLE_NAME,
+                myDBHelper.NAME + " =?", whereArgs);
+        return count;
+    }
+
     static class myDBHelper extends SQLiteOpenHelper {
         private Context context;
 

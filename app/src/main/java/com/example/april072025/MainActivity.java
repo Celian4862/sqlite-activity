@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
         helper = new myDBAdapter(this);
 
         btn_add_user.setOnClickListener(this::addUser);
+        btn_view_data.setOnClickListener(this::viewData);
+        btn_del.setOnClickListener(this::deleteData);
     }
 
     public void addUser(View view) {
@@ -60,7 +62,31 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    public void viewData(View view) {}
+    public void viewData(View view) {
+        String data = helper.getData();
+        Toast.makeText(getApplicationContext(),
+                data,
+                Toast.LENGTH_LONG).show();
+    }
     public void updateData(View view) {}
-    public void deleteData(View view) {}
+    public void deleteData(View view) {
+        String uname = delete.getText().toString();
+        if (uname.isEmpty()) {
+            Toast.makeText(getApplicationContext(),
+                    "Enter data!",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            int uuname = helper.deleteData(uname);
+            if (uuname <= 0) {
+                Toast.makeText(getApplicationContext(),
+                        "Unsuccessful!",
+                        Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        "Data has been deleted!",
+                        Toast.LENGTH_LONG).show();
+                delete.setText("");
+            }
+        }
+    }
 }
