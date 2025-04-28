@@ -40,31 +40,40 @@ public class myDBAdapter {
                     .append("  ")
                     .append(name)
                     .append("  ")
-                    .append(pass);
+                    .append(pass)
+                    .append("\n");
         }
+        cursor.close();
         return stringBuffer.toString();
     }
 
     public long insertData (String name, String pass) {
         SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(dbHelper.NAME, name);
-        contentValues.put(dbHelper.MyPASSWORD, pass);
-        long id = sqLiteDatabase.insert(dbHelper.TABLE_NAME, null, contentValues);
-        return id;
+        contentValues.put(myDBHelper.NAME, name);
+        contentValues.put(myDBHelper.MyPASSWORD, pass);
+        return sqLiteDatabase.insert(myDBHelper.TABLE_NAME, null, contentValues);
     }
 
     public int deleteData(String uname) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String[] whereArgs = {uname};
-        int count = db.delete(
+        return db.delete(
                 myDBHelper.TABLE_NAME,
                 myDBHelper.NAME + " =?", whereArgs);
-        return count;
+    }
+
+    public int updateName(String oldName, String newName) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(myDBHelper.NAME, newName);
+        String[] whereArgs = {oldName};
+        return db.update(myDBHelper.TABLE_NAME,
+                contentValues,
+                myDBHelper.NAME + " =?", whereArgs);
     }
 
     static class myDBHelper extends SQLiteOpenHelper {
-        private Context context;
 
         private static final String DATABASE_NAME = "myDB";
         private static final String TABLE_NAME = "myTable";
@@ -83,7 +92,6 @@ public class myDBAdapter {
 
         public myDBHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_Version);
-            this.context = context;
         }
 
         @Override

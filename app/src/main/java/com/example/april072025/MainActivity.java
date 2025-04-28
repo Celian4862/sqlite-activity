@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -13,6 +14,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
+    TextView view_data;
     EditText username, pass, delete, current_name, new_name;
     Button btn_view_data, btn_add_user, btn_del, btn_update;
     myDBAdapter helper;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        view_data = findViewById(R.id.txt_view_data);
         username = findViewById(R.id.ed_username);
         pass = findViewById(R.id.ed_password);
         delete = findViewById(R.id.ed_delete_data);
@@ -39,16 +42,28 @@ public class MainActivity extends AppCompatActivity {
         btn_del = findViewById(R.id.btn_delete);
         helper = new myDBAdapter(this);
 
-        btn_add_user.setOnClickListener(this::addUser);
+        btn_add_user.setOnClickListener(v -> {
+            addUser(v);
+            viewData(v);
+        });
         btn_view_data.setOnClickListener(this::viewData);
-        btn_del.setOnClickListener(this::deleteData);
+        btn_update.setOnClickListener(v -> {
+            updateData(v);
+            viewData(v);
+        });
+        btn_del.setOnClickListener(v -> {
+            deleteData(v);
+            viewData(v);
+        });
     }
 
     public void addUser(View view) {
         String name = username.getText().toString();
         String password = pass.getText().toString();
         if (name.isEmpty() || password.isEmpty()) {
-            Toast.makeText(getApplicationContext(), "name and password must not be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),
+                    "Name and password must not be empty",
+                    Toast.LENGTH_SHORT).show();
         } else {
             long id = helper.insertData(name, password);
             if (id <= 0) {
@@ -63,12 +78,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void viewData(View view) {
-        String data = helper.getData();
-        Toast.makeText(getApplicationContext(),
-                data,
-                Toast.LENGTH_LONG).show();
+        view_data.setText(helper.getData());
     }
-    public void updateData(View view) {}
+    public void updateData(View view) {
+        String currName = current_name.getText().toString(),
+                newName = new_name.getText().toString();
+        if (currName.isEmpty() || newName.isEmpty()) {
+            Toast.makeText(getApplicationContext(),
+                    "Enter data!",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            if (helper.updateName(currName, newName) <= 0) {
+                Toast.makeText(getApplicationContext(),
+                        "Data was not successfully updated.",
+                        Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        "Data updated successfully!",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    }
     public void deleteData(View view) {
         String uname = delete.getText().toString();
         if (uname.isEmpty()) {
