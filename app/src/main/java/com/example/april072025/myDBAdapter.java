@@ -29,13 +29,13 @@ public class myDBAdapter {
         StringBuilder stringBuffer = new StringBuilder();
         while (cursor.moveToNext()) {
             int temp = cursor.getColumnIndex(myDBHelper.UID);
-            int cid = cursor.getInt(Math.max(temp, 1)); // cid means customer ID
+            int cid = cursor.getInt(temp); // cid means customer ID
 
             temp = cursor.getColumnIndex(myDBHelper.NAME);
-            String name = cursor.getString(Math.max(temp, 1));
+            String name = cursor.getString(temp);
 
             temp = cursor.getColumnIndex(myDBHelper.MyPASSWORD);
-            String pass = cursor.getString(Math.max(temp, 1));
+            String pass = cursor.getString(temp);
             stringBuffer.append(cid)
                     .append("  ")
                     .append(name)
