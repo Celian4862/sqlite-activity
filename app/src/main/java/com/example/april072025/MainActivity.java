@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -12,10 +11,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity {
-    TextView view_data;
     EditText username, pass, delete, current_name, new_name;
+    RecyclerView view_data_2;
     Button btn_view_data, btn_add_user, btn_del, btn_update;
     myDBAdapter helper;
 
@@ -30,17 +31,19 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        view_data = findViewById(R.id.txt_view_data);
         username = findViewById(R.id.ed_username);
         pass = findViewById(R.id.ed_password);
         delete = findViewById(R.id.ed_delete_data);
         current_name = findViewById(R.id.ed_current_name);
         new_name = findViewById(R.id.ed_new_name);
+        view_data_2 = findViewById(R.id.recycler_view_data);
         btn_add_user = findViewById(R.id.add_user);
         btn_view_data = findViewById(R.id.view_data);
         btn_update = findViewById(R.id.btn_update);
         btn_del = findViewById(R.id.btn_delete);
         helper = new myDBAdapter(this);
+
+        view_data_2.setLayoutManager(new LinearLayoutManager(this));
 
         btn_add_user.setOnClickListener(v -> {
             addUser(v);
@@ -78,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void viewData(View view) {
-        view_data.setText(helper.getData());
+        view_data_2.setAdapter(new SQLiteAdapter(helper.getData()));
     }
     public void updateData(View view) {
         String currName = current_name.getText().toString(),

@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.Locale;
+
 public class myDBAdapter {
     myDBHelper dbHelper;
 
@@ -13,7 +16,7 @@ public class myDBAdapter {
         dbHelper = new myDBHelper(context);
     }
 
-    public String getData() {
+    public String[] getData() {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String[] columns = {
                 myDBHelper.UID,
@@ -26,7 +29,7 @@ public class myDBAdapter {
                 null,
                 null,
                 null);
-        StringBuilder stringBuffer = new StringBuilder();
+        ArrayList<String> stringBuffer = new ArrayList<>();
         while (cursor.moveToNext()) {
             int temp = cursor.getColumnIndex(myDBHelper.UID);
             int cid = cursor.getInt(temp); // cid means customer ID
@@ -36,15 +39,16 @@ public class myDBAdapter {
 
             temp = cursor.getColumnIndex(myDBHelper.MyPASSWORD);
             String pass = cursor.getString(temp);
-            stringBuffer.append(cid)
-                    .append("  ")
-                    .append(name)
-                    .append("  ")
-                    .append(pass)
-                    .append("\n");
+
+            stringBuffer.add(String.format(new Locale("en"), "%d %s %s", cid, name, pass));
         }
         cursor.close();
-        return stringBuffer.toString();
+        String[] rtn_string = new String[stringBuffer.size()];
+        int i = 0;
+        for (String item : stringBuffer) {
+            rtn_string[i++] = item;
+        }
+        return rtn_string;
     }
 
     public long insertData (String name, String pass) {
